@@ -2,6 +2,7 @@ package main
 
 import (
 	"database/sql"
+	"log"
 
 	"github.com/Akeemdnl/go-crud/api"
 	"github.com/go-sql-driver/mysql"
@@ -20,15 +21,15 @@ func main() {
 
 	db, err := sql.Open("mysql", cfg.FormatDSN())
 	if err != nil {
-		panic(err)
+		log.Fatal(err)
 	}
 
 	err = db.Ping()
 	if err != nil {
-		panic(err)
+		log.Fatal(err)
 	}
 
-	if err := api.Run(":8080"); err != nil {
-		panic(err)
+	if err := api.Run(":8080", db); err != nil {
+		log.Fatal(err)
 	}
 }
