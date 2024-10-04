@@ -12,7 +12,7 @@ import (
 
 func Run(addr string, db *sql.DB) error {
 	router := mux.NewRouter()
-	router.HandleFunc("/healthCheck", handleHealthCheck).Methods("GET")
+	router.HandleFunc("/healthcheck", handleHealthCheck).Methods("GET")
 	subrouter := router.PathPrefix("/api/v1").Subrouter()
 
 	userHandler := users.NewHandler(db)

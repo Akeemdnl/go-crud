@@ -24,6 +24,7 @@ func NewHandler(db *sql.DB) *Handler {
 func (h *Handler) RegisterRoutes(router *mux.Router) {
 	router.HandleFunc(prefix, h.handleGetUser).Methods("GET")
 	router.HandleFunc(prefix, h.handleAddUser).Methods("POST")
+	router.HandleFunc(prefix+"/{userID}", h.handleUpdateUser).Methods("PUT")
 }
 
 func (h *Handler) handleGetUser(w http.ResponseWriter, r *http.Request) {
@@ -39,14 +40,13 @@ func (h *Handler) handleGetUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	user, err := getUserBy(h.db, userID, "id")
-	if err != nil {
-		utils.WriteError(w, http.StatusInternalServerError, err)
+	user, err := getUserById(h.db, userID)
+	if err == sql.ErrNoRows {
+		utils.WriteError(w, http.StatusNotFound, fmt.Errorf("User not found"))
 		return
 	}
-
-	if user.ID == 0 {
-		utils.WriteError(w, http.StatusNotFound, fmt.Errorf("User not found"))
+	if err != nil {
+		utils.WriteError(w, http.StatusInternalServerError, err)
 		return
 	}
 
@@ -73,4 +73,32 @@ func (h *Handler) handleAddUser(w http.ResponseWriter, r *http.Request) {
 	}
 
 	utils.WriteJSON(w, http.StatusAccepted, user)
+}
+
+func (h *Handler) handleUpdateUser(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	str, ok := vars["userID"]
+	if !ok {
+		utils.WriteError(w, http.StatusBadRequest, fmt.Errorf("missing user Id"))
+		return
+	}
+
+	userID, err := strconv.Atoi(str)
+	if err != nil {
+		utils.WriteError(w, http.StatusInternalServerError, err)
+		return
+	}
+
+	var updateUserPayload UpdateUserPayload
+	if err := utils.ParseJSON(r, &updateUserPayload); err != nil {
+		utils.WriteError(w, http.StatusBadRequest, err)
+		return
+	}
+
+	user, err := updateUser(h.db, &updateUserPayload, userID)
+	if err != nil {
+		utils.WriteError(w, http.StatusInternalServerError, err)
+	}
+
+	utils.WriteJSON(w, http.StatusOK, user)
 }
