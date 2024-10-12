@@ -3,8 +3,8 @@ module github.com/Akeemdnl/go-crud
 go 1.22.2
 
 require (
-	github.com/go-sql-driver/mysql v1.8.1
 	github.com/gorilla/mux v1.8.1
+	github.com/lib/pq v1.10.9
 )
 
 require (
@@ -18,7 +18,4 @@ require (
 	golang.org/x/text v0.14.0 // indirect
 )
 
-require (
-	filippo.io/edwards25519 v1.1.0 // indirect
-	github.com/go-playground/validator/v10 v10.22.1
-)
+require github.com/go-playground/validator/v10 v10.22.1

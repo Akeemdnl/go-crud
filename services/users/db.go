@@ -5,7 +5,7 @@ import (
 )
 
 func addUser(db *sql.DB, payload CreateUserPayload) error {
-	_, err := db.Exec("INSERT INTO users(name, email) VALUES (?, ?)", payload.Name, payload.Email)
+	_, err := db.Exec("INSERT INTO users(name, email) VALUES ($1, $2)", payload.Name, payload.Email)
 	if err != nil {
 		return err
 	}
@@ -15,7 +15,7 @@ func addUser(db *sql.DB, payload CreateUserPayload) error {
 
 func getUserById(db *sql.DB, id int) (*User, error) {
 	user := new(User)
-	err := db.QueryRow("SELECT * FROM users WHERE id = ?", id).Scan(&user.ID, &user.Name, &user.Email)
+	err := db.QueryRow("SELECT * FROM users WHERE id = $1", id).Scan(&user.ID, &user.Name, &user.Email)
 	if err != nil {
 		return nil, err
 	}
@@ -43,14 +43,14 @@ func getAllUsers(db *sql.DB) ([]User, error) {
 }
 
 func updateUser(db *sql.DB, payload *UpdateUserPayload, id int) (*User, error) {
-	query := "UPDATE users SET name = ?, email = ? WHERE id = ?"
+	query := "UPDATE users SET name = $1, email = $2 WHERE id = $3"
 	_, err := db.Exec(query, payload.Name, payload.Email, id)
 	if err != nil {
 		return nil, err
 	}
 
 	user := new(User)
-	query = "SELECT * from users WHERE id = ?"
+	query = "SELECT * from users WHERE id = $1"
 	if err := db.QueryRow(query, id).Scan(&user.ID, &user.Name, &user.Email); err != nil {
 		return nil, err
 	}

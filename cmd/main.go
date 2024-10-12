@@ -6,23 +6,14 @@ import (
 	"log"
 
 	"github.com/Akeemdnl/go-crud/api"
-	"github.com/go-sql-driver/mysql"
+	_ "github.com/lib/pq"
 )
 
-const dbType = "mysql"
+const dbType = "postgres"
 
 func main() {
-	cfg := mysql.Config{
-		User:                 "root",
-		Passwd:               "mypassword",
-		DBName:               "gocrud",
-		Addr:                 "127.0.0.1:3306",
-		Net:                  "tcp",
-		AllowNativePasswords: true,
-		ParseTime:            true,
-	}
-
-	db, err := sql.Open(dbType, cfg.FormatDSN())
+	dsn := "user=postgres password=mysecretpassword dbname=gocrud host=localhost port=5432 sslmode=disable"
+	db, err := sql.Open(dbType, dsn)
 	if err != nil {
 		log.Fatal(err)
 	}
