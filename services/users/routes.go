@@ -22,15 +22,17 @@ func NewHandler(db *sql.DB) *Handler {
 }
 
 func (h *Handler) RegisterRoutes(router *mux.Router) {
-	router.HandleFunc(prefix, h.handleGetUser).Methods("GET")
+	router.HandleFunc(prefix+"/{userID}", h.handleGetUser).Methods("GET")
 	router.HandleFunc(prefix, h.handleAddUser).Methods("POST")
 	router.HandleFunc(prefix+"/{userID}", h.handleUpdateUser).Methods("PUT")
+	router.HandleFunc(prefix, h.handleGetAllUsers).Methods("GET")
 }
 
 func (h *Handler) handleGetUser(w http.ResponseWriter, r *http.Request) {
-	id := r.URL.Query().Get("id")
-	if id == "" {
-		utils.WriteError(w, http.StatusBadRequest, fmt.Errorf("missing user id"))
+	vars := mux.Vars(r)
+	id, ok := vars["userID"]
+	if !ok {
+		utils.WriteError(w, http.StatusBadRequest, fmt.Errorf("missing user Id"))
 		return
 	}
 
@@ -66,7 +68,7 @@ func (h *Handler) handleAddUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	_, err := h.db.Exec("INSERT INTO users(name, email) VALUES (?, ?)", user.Name, user.Email)
+	err := addUser(h.db, user)
 	if err != nil {
 		utils.WriteError(w, http.StatusInternalServerError, err)
 		return
@@ -77,13 +79,13 @@ func (h *Handler) handleAddUser(w http.ResponseWriter, r *http.Request) {
 
 func (h *Handler) handleUpdateUser(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
-	str, ok := vars["userID"]
+	id, ok := vars["userID"]
 	if !ok {
 		utils.WriteError(w, http.StatusBadRequest, fmt.Errorf("missing user Id"))
 		return
 	}
 
-	userID, err := strconv.Atoi(str)
+	userID, err := strconv.Atoi(id)
 	if err != nil {
 		utils.WriteError(w, http.StatusInternalServerError, err)
 		return
@@ -101,4 +103,13 @@ func (h *Handler) handleUpdateUser(w http.ResponseWriter, r *http.Request) {
 	}
 
 	utils.WriteJSON(w, http.StatusOK, user)
+}
+
+func (h *Handler) handleGetAllUsers(w http.ResponseWriter, r *http.Request) {
+	users, err := getAllUsers(h.db)
+	if err != nil {
+		utils.WriteError(w, http.StatusInternalServerError, err)
+	}
+
+	utils.WriteJSON(w, http.StatusOK, users)
 }
