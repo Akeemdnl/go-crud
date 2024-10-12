@@ -100,6 +100,7 @@ func (h *Handler) handleUpdateUser(w http.ResponseWriter, r *http.Request) {
 	user, err := updateUser(h.db, &updateUserPayload, userID)
 	if err != nil {
 		utils.WriteError(w, http.StatusInternalServerError, err)
+		return
 	}
 
 	utils.WriteJSON(w, http.StatusOK, user)
@@ -109,6 +110,7 @@ func (h *Handler) handleGetAllUsers(w http.ResponseWriter, r *http.Request) {
 	users, err := getAllUsers(h.db)
 	if err != nil {
 		utils.WriteError(w, http.StatusInternalServerError, err)
+		return
 	}
 
 	utils.WriteJSON(w, http.StatusOK, users)

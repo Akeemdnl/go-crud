@@ -2,11 +2,14 @@ package main
 
 import (
 	"database/sql"
+	"fmt"
 	"log"
 
 	"github.com/Akeemdnl/go-crud/api"
 	"github.com/go-sql-driver/mysql"
 )
+
+const dbType = "mysql"
 
 func main() {
 	cfg := mysql.Config{
@@ -19,7 +22,7 @@ func main() {
 		ParseTime:            true,
 	}
 
-	db, err := sql.Open("mysql", cfg.FormatDSN())
+	db, err := sql.Open(dbType, cfg.FormatDSN())
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -28,6 +31,7 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+	fmt.Println("Successfully connected to db:", dbType)
 
 	if err := api.Run(":8080", db); err != nil {
 		log.Fatal(err)

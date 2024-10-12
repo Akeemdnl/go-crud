@@ -56,16 +56,3 @@ func updateUser(db *sql.DB, payload *UpdateUserPayload, id int) (*User, error) {
 	}
 	return user, nil
 }
-
-// func scanUserIntoRow(rows *sql.Rows, user *User) (*User, error) {
-// 	err := rows.Scan(
-// 		&user.ID,
-// 		&user.Name,
-// 		&user.Email,
-// 	)
-// 	if err != nil {
-// 		return nil, err
-// 	}
-
-// 	return user, nil
-// }
