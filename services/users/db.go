@@ -30,7 +30,7 @@ func getAllUsers(db *sql.DB) ([]User, error) {
 	}
 	defer rows.Close()
 
-	var users []User
+	var users []User = make([]User, 0)
 	for rows.Next() {
 		var user User
 		if err := rows.Scan(&user.ID, &user.Name, &user.Email); err != nil {
@@ -38,7 +38,9 @@ func getAllUsers(db *sql.DB) ([]User, error) {
 		}
 		users = append(users, user)
 	}
-
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
 	return users, nil
 }
 
@@ -55,4 +57,12 @@ func updateUser(db *sql.DB, payload *UpdateUserPayload, id int) (*User, error) {
 		return nil, err
 	}
 	return user, nil
+}
+
+func deleteUser(db *sql.DB, id int) error {
+	_, err := db.Exec("DELETE FROM users WHERE id = $1", id)
+	if err != nil {
+		return err
+	}
+	return nil
 }

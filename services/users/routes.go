@@ -26,13 +26,13 @@ func (h *Handler) RegisterRoutes(router *mux.Router) {
 	router.HandleFunc(prefix, h.handleAddUser).Methods("POST")
 	router.HandleFunc(prefix+"/{userID}", h.handleUpdateUser).Methods("PUT")
 	router.HandleFunc(prefix, h.handleGetAllUsers).Methods("GET")
+	router.HandleFunc(prefix+"/{userID}", h.handleDeleteUser).Methods("DELETE")
 }
 
 func (h *Handler) handleGetUser(w http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
-	id, ok := vars["userID"]
-	if !ok {
-		utils.WriteError(w, http.StatusBadRequest, fmt.Errorf("missing user Id"))
+	id, err := utils.GetUrlVariable("userID", r)
+	if err != nil {
+		utils.WriteError(w, http.StatusBadRequest, err)
 		return
 	}
 
@@ -114,4 +114,25 @@ func (h *Handler) handleGetAllUsers(w http.ResponseWriter, r *http.Request) {
 	}
 
 	utils.WriteJSON(w, http.StatusOK, users)
+}
+
+func (h *Handler) handleDeleteUser(w http.ResponseWriter, r *http.Request) {
+	id, err := utils.GetUrlVariable("userID", r)
+	if err != nil {
+		utils.WriteError(w, http.StatusBadRequest, err)
+		return
+	}
+
+	userID, err := strconv.Atoi(id)
+	if err != nil {
+		utils.WriteError(w, http.StatusInternalServerError, err)
+		return
+	}
+
+	if err := deleteUser(h.db, userID); err != nil {
+		utils.WriteError(w, http.StatusInternalServerError, err)
+		return
+	}
+
+	utils.WriteJSON(w, http.StatusOK, utils.JsonMessage("Successfully deleted user"))
 }

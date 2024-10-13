@@ -6,13 +6,23 @@ import (
 	"net/http"
 
 	"github.com/go-playground/validator/v10"
+	"github.com/gorilla/mux"
 )
+
+type ErrorResponse struct {
+	Msg string
+}
+
+func (r ErrorResponse) Error() string {
+	return string(r.Msg)
+}
 
 var Validator = validator.New()
 
 func WriteJSON(w http.ResponseWriter, status int, v any) error {
 	w.Header().Add("Content-Type", "application/json")
 	w.WriteHeader(status)
+
 	return json.NewEncoder(w).Encode(v)
 }
 
@@ -30,4 +40,14 @@ func ParseJSON(r *http.Request, v any) error {
 
 func JsonMessage(msg string) map[string]string {
 	return map[string]string{"message": msg}
+}
+
+func GetUrlVariable(variableName string, r *http.Request) (string, error) {
+	vars := mux.Vars(r)
+	variable, ok := vars[variableName]
+	if !ok {
+		return "", ErrorResponse{Msg: fmt.Sprintf("missing %s", variableName)}
+	}
+
+	return variable, nil
 }
