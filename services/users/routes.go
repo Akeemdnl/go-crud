@@ -11,7 +11,7 @@ import (
 	"github.com/gorilla/mux"
 )
 
-const prefix = "/users"
+const userPath = "/users"
 
 type Handler struct {
 	db *sql.DB
@@ -22,11 +22,11 @@ func NewHandler(db *sql.DB) *Handler {
 }
 
 func (h *Handler) RegisterRoutes(router *mux.Router) {
-	router.HandleFunc(prefix+"/{userID}", h.handleGetUser).Methods("GET")
-	router.HandleFunc(prefix, h.handleAddUser).Methods("POST")
-	router.HandleFunc(prefix+"/{userID}", h.handleUpdateUser).Methods("PUT")
-	router.HandleFunc(prefix, h.handleGetAllUsers).Methods("GET")
-	router.HandleFunc(prefix+"/{userID}", h.handleDeleteUser).Methods("DELETE")
+	router.HandleFunc(userPath+"/{userID}", h.handleGetUser).Methods("GET")
+	router.HandleFunc(userPath, h.handleAddUser).Methods("POST")
+	router.HandleFunc(userPath+"/{userID}", h.handleUpdateUser).Methods("PUT")
+	router.HandleFunc(userPath, h.handleGetAllUsers).Methods("GET")
+	router.HandleFunc(userPath+"/{userID}", h.handleDeleteUser).Methods("DELETE")
 }
 
 func (h *Handler) handleGetUser(w http.ResponseWriter, r *http.Request) {
