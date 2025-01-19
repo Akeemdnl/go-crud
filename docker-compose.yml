@@ -1,0 +1,22 @@
+version: "3.8"
+services:
+  postgres:
+    image: postgres:latest
+    container_name: go_crud_db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: mysecretpassword
+      POSTGRES_DB: gocrud
+    ports:
+      - "5432:5432"
+
+  go-app:
+    build:
+      context: .
+    container_name: app
+    ports:
+      - "8080:8080"
+    volumes:
+      - .:/app
+    depends_on:
+      - postgres

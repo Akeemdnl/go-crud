@@ -12,7 +12,7 @@ import (
 const dbType = "postgres"
 
 func main() {
-	dsn := "user=postgres password=mysecretpassword dbname=gocrud host=localhost port=5432 sslmode=disable"
+	dsn := "user=postgres password=mysecretpassword dbname=gocrud host=go_crud_db port=5432 sslmode=disable"
 	db, err := sql.Open(dbType, dsn)
 	if err != nil {
 		log.Fatal(err)
