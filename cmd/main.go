@@ -1,30 +1,23 @@
 package main
 
 import (
-	"database/sql"
 	"fmt"
 	"log"
 
 	"github.com/Akeemdnl/go-crud/api"
+	"github.com/Akeemdnl/go-crud/db"
 	_ "github.com/lib/pq"
 )
 
-const dbType = "postgres"
-
 func main() {
-	dsn := "user=postgres password=mysecretpassword dbname=gocrud host=go_crud_db port=5432 sslmode=disable"
-	db, err := sql.Open(dbType, dsn)
+	database, err := db.InitDB()
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	err = db.Ping()
-	if err != nil {
-		log.Fatal(err)
-	}
-	fmt.Println("Successfully connected to db:", dbType)
+	fmt.Println("Successfully connected to db")
 
-	if err := api.Run(":8080", db); err != nil {
+	if err := api.Run(":8080", database); err != nil {
 		log.Fatal(err)
 	}
 }
