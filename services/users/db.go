@@ -15,7 +15,7 @@ func addUser(db *sql.DB, payload CreateUserPayload) error {
 
 func getUserById(db *sql.DB, id int) (*User, error) {
 	user := new(User)
-	err := db.QueryRow("SELECT * FROM users WHERE id = $1", id).Scan(&user.ID, &user.Name, &user.Email)
+	err := db.QueryRow("SELECT * FROM users WHERE id = $1", id).Scan(&user.ID, &user.Name, &user.Email, &user.CreatedAt)
 	if err != nil {
 		return nil, err
 	}
@@ -33,7 +33,7 @@ func getAllUsers(db *sql.DB) ([]User, error) {
 	var users []User = make([]User, 0)
 	for rows.Next() {
 		var user User
-		if err := rows.Scan(&user.ID, &user.Name, &user.Email); err != nil {
+		if err := rows.Scan(&user.ID, &user.Name, &user.Email, &user.CreatedAt); err != nil {
 			return nil, err
 		}
 		users = append(users, user)
