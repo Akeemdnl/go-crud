@@ -27,5 +27,5 @@ func (h *Handler) handleAddUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	utils.WriteJSON(w, http.StatusAccepted, user)
+	utils.WriteJSON(w, http.StatusCreated, user)
 }

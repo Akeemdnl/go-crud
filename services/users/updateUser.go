@@ -11,7 +11,7 @@ import (
 
 func (h *Handler) handleUpdateUser(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
-	id, ok := vars["userID"]
+	id, ok := vars["id"]
 	if !ok {
 		utils.WriteError(w, http.StatusBadRequest, fmt.Errorf("missing user Id"))
 		return

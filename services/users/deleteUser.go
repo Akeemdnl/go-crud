@@ -8,7 +8,7 @@ import (
 )
 
 func (h *Handler) handleDeleteUser(w http.ResponseWriter, r *http.Request) {
-	id, err := utils.GetUrlVariable("userID", r)
+	id, err := utils.GetUrlVariable("id", r)
 	if err != nil {
 		utils.WriteError(w, http.StatusBadRequest, err)
 		return

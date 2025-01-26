@@ -13,10 +13,10 @@ import (
 func Run(addr string, db *sql.DB) error {
 	router := mux.NewRouter()
 	router.HandleFunc("/healthcheck", handleHealthCheck).Methods("GET")
-	subrouter := router.PathPrefix("/api/v1").Subrouter()
+	v1 := router.PathPrefix("/api/v1").Subrouter()
 
 	userHandler := users.NewHandler(db)
-	userHandler.RegisterRoutes(subrouter)
+	userHandler.RegisterRoutes(v1)
 
 	fmt.Println("Listening on", addr)
 	return http.ListenAndServe(addr, router)

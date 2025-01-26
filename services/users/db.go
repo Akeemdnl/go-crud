@@ -24,7 +24,7 @@ func getUserById(db *sql.DB, id int) (*User, error) {
 }
 
 func getAllUsers(db *sql.DB) ([]User, error) {
-	rows, err := db.Query("SELECT * from users LIMIT 10")
+	rows, err := db.Query("SELECT * from users ORDER BY id ASC LIMIT 10")
 	if err != nil {
 		return nil, err
 	}
@@ -53,7 +53,7 @@ func updateUser(db *sql.DB, payload *UpdateUserPayload, id int) (*User, error) {
 
 	user := new(User)
 	query = "SELECT * from users WHERE id = $1"
-	if err := db.QueryRow(query, id).Scan(&user.ID, &user.Name, &user.Email); err != nil {
+	if err := db.QueryRow(query, id).Scan(&user.ID, &user.Name, &user.Email, &user.CreatedAt); err != nil {
 		return nil, err
 	}
 	return user, nil
