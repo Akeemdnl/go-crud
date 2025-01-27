@@ -51,3 +51,11 @@ func GetUrlVariable(variableName string, r *http.Request) (string, error) {
 
 	return variable, nil
 }
+
+func GetQueryParam(paramName string, r *http.Request) (string, error) {
+	param := r.URL.Query().Get(paramName)
+	if param == "" {
+		return "", ErrorResponse{Msg: "Invalid name"}
+	}
+	return param, nil
+}

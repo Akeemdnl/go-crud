@@ -18,6 +18,8 @@ func NewHandler(db *sql.DB) *Handler {
 
 func (h *Handler) RegisterRoutes(router *mux.Router) {
 	router.HandleFunc(userPath+"/{id:[0-9]+}", h.handleGetUser).Methods("GET")
+	router.HandleFunc(userPath, h.handleGetUserByName).Queries("name", "{name}").Methods("GET")
+	router.HandleFunc(userPath, h.handleGetUserByEmail).Queries("email", "{email}").Methods("GET")
 	router.HandleFunc(userPath, h.handleGetAllUsers).Methods("GET")
 	router.HandleFunc(userPath, h.handleAddUser).Methods("POST")
 	router.HandleFunc(userPath+"/{id:[0-9]+}", h.handleUpdateUser).Methods("PUT")

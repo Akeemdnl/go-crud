@@ -2,6 +2,7 @@ package users
 
 import (
 	"database/sql"
+	"fmt"
 )
 
 func addUser(db *sql.DB, payload CreateUserPayload) error {
@@ -13,9 +14,10 @@ func addUser(db *sql.DB, payload CreateUserPayload) error {
 	return nil
 }
 
-func getUserById(db *sql.DB, id int) (*User, error) {
+func getUserBy(db *sql.DB, column string, value any) (*User, error) {
 	user := new(User)
-	err := db.QueryRow("SELECT * FROM users WHERE id = $1", id).Scan(&user.ID, &user.Name, &user.Email, &user.CreatedAt)
+	query := fmt.Sprintf("SELECT * FROM users WHERE %s = $1", column)
+	err := db.QueryRow(query, value).Scan(&user.ID, &user.Name, &user.Email, &user.CreatedAt)
 	if err != nil {
 		return nil, err
 	}
